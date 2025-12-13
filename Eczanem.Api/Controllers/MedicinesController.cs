@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Eczanem.Api.Models; // Model klasörünü kullandığımızdan emin olalım
+using Microsoft.EntityFrameworkCore; // Veritabanı işlemleri için şart
+using Eczanem.Api.Data;
+using Eczanem.Api.Models;
 
 namespace Eczanem.Api.Controllers
 {
@@ -7,55 +9,60 @@ namespace Eczanem.Api.Controllers
     [ApiController]
     public class MedicinesController : ControllerBase
     {
-        // Geçici veritabanımız (Static List)
-        private static List<Medicine> _medicines = new List<Medicine>
+        // Veritabanı Bağlantımız
+        private readonly ApplicationDbContext _context;
+
+        public MedicinesController(ApplicationDbContext context)
         {
-            new Medicine { Id = 1, Name = "Parol 500mg", Barcode = "86912345", Manufacturer = "Atabay" },
-            new Medicine { Id = 2, Name = "Aspirin", Barcode = "86998765", Manufacturer = "Bayer" }
-        };
+            _context = context;
+        }
 
         // 1. LİSTELEME (GET)
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(_medicines);
+            // Veritabanındaki "Medicines" tablosundan hepsini çek
+            var medicines = await _context.Medicines.ToListAsync();
+            return Ok(medicines);
         }
 
         // 2. EKLEME (POST)
         [HttpPost]
-        public IActionResult Add(Medicine medicine)
+        public async Task<IActionResult> Add(Medicine medicine)
         {
-            // Yeni ID oluştur (En son ID + 1)
-            int newId = _medicines.Any() ? _medicines.Max(m => m.Id) + 1 : 1;
-            medicine.Id = newId;
-
-            _medicines.Add(medicine);
+            // Veritabanına ekle ve kaydet
+            _context.Medicines.Add(medicine);
+            await _context.SaveChangesAsync(); // Kaydetmeden ID oluşmaz
             return Ok(medicine);
         }
 
-        // 3. SİLME (DELETE) <-- YENİ
+        // 3. SİLME (DELETE)
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var medicine = _medicines.FirstOrDefault(m => m.Id == id);
+            var medicine = await _context.Medicines.FindAsync(id);
             if (medicine == null) return NotFound("İlaç bulunamadı");
 
-            _medicines.Remove(medicine);
+            _context.Medicines.Remove(medicine);
+            await _context.SaveChangesAsync();
             return Ok();
         }
 
-        // 4. GÜNCELLEME (PUT) <-- YENİ
+        // 4. GÜNCELLEME (PUT)
         [HttpPut("{id}")]
-        public IActionResult Update(int id, Medicine updatedMedicine)
+        public async Task<IActionResult> Update(int id, Medicine updatedMedicine)
         {
-            var existingMedicine = _medicines.FirstOrDefault(m => m.Id == id);
+            var existingMedicine = await _context.Medicines.FindAsync(id);
             if (existingMedicine == null) return NotFound("İlaç bulunamadı");
 
             // Bilgileri güncelle
             existingMedicine.Name = updatedMedicine.Name;
             existingMedicine.Barcode = updatedMedicine.Barcode;
             existingMedicine.Manufacturer = updatedMedicine.Manufacturer;
+            existingMedicine.Stock = updatedMedicine.Stock;
+            existingMedicine.Price = updatedMedicine.Price;
 
+            await _context.SaveChangesAsync(); // Değişiklikleri veritabanına yaz
             return Ok(existingMedicine);
         }
     }

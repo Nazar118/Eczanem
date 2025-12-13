@@ -17,5 +17,8 @@ namespace Eczanem.Api.Models
 
         [MaxLength(200)]
         public string? Manufacturer { get; set; } // Üretici firma
+
+        public int Stock { get; set; } = 0;      // İlaç Adedi
+        public decimal Price { get; set; } = 0;  // İlaç Fiyatı
     }
 }
