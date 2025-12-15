@@ -17,6 +17,7 @@ namespace Eczanem.Api.Data
         public DbSet<Stock> Stocks { get; set; }     // Stoklar Tablosu
         public DbSet<Sale> Sales { get; set; }       // Satışlar Tablosu
         public DbSet<User> Users { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
     }
 }
