@@ -63,7 +63,6 @@ namespace Eczanem.Api.Services
                 .Where(s => s.SaleDate >= today)
                 .Sum(s => s.TotalPrice);
         }
-        // ... Diğer kodların altındaki boşluğa ekle:
 
         public async Task DeleteSaleAsync(int id)
         {
