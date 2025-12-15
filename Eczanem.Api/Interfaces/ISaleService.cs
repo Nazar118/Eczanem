@@ -1,5 +1,4 @@
-﻿// Interfaces/ISaleService.cs
-using Eczanem.Api.Models;
+﻿using Eczanem.Api.Models;
 
 namespace Eczanem.Api.Interfaces
 {
@@ -7,5 +6,7 @@ namespace Eczanem.Api.Interfaces
     {
         Task<IEnumerable<Sale>> GetAllSalesAsync();
         Task<Sale> CreateSaleAsync(Sale sale);
+        Task<decimal> GetDailyTurnoverAsync(); 
+        Task DeleteSaleAsync(int id);
     }
 }

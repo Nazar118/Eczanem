@@ -1,5 +1,4 @@
-﻿// Controllers/PatientsController.cs
-using Eczanem.Api.Interfaces;
+﻿using Eczanem.Api.Interfaces;
 using Eczanem.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +37,24 @@ namespace Eczanem.Api.Controllers
 
             var createdPatient = await _patientService.CreatePatientAsync(patient);
             return CreatedAtAction(nameof(GetById), new { id = createdPatient.Id }, createdPatient);
+        }
+
+        // --- YENİ EKLENEN: GÜNCELLEME ---
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] Patient patient)
+        {
+            if (id != patient.Id) return BadRequest("ID uyuşmazlığı");
+
+            await _patientService.UpdatePatientAsync(patient);
+            return Ok(patient);
+        }
+
+        // --- YENİ EKLENEN: SİLME ---
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _patientService.DeletePatientAsync(id);
+            return Ok();
         }
     }
 }

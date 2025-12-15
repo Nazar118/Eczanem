@@ -1,5 +1,4 @@
-﻿// Interfaces/IPatientService.cs
-using Eczanem.Api.Models;
+﻿using Eczanem.Api.Models;
 
 namespace Eczanem.Api.Interfaces
 {
@@ -8,5 +7,7 @@ namespace Eczanem.Api.Interfaces
         Task<IEnumerable<Patient>> GetAllPatientsAsync();
         Task<Patient?> GetPatientByIdAsync(int id);
         Task<Patient> CreatePatientAsync(Patient patient);
+        Task UpdatePatientAsync(Patient patient);
+        Task DeletePatientAsync(int id);
     }
 }
