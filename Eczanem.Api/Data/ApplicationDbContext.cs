@@ -18,6 +18,6 @@ namespace Eczanem.Api.Data
         public DbSet<Sale> Sales { get; set; }       // Satışlar Tablosu
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
-
+        public DbSet<Supplier> Suppliers { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // Veritabanı işlemleri için şart
+using Microsoft.EntityFrameworkCore;
 using Eczanem.Api.Data;
 using Eczanem.Api.Models;
 
@@ -9,7 +9,6 @@ namespace Eczanem.Api.Controllers
     [ApiController]
     public class MedicinesController : ControllerBase
     {
-        // Veritabanı Bağlantımız
         private readonly ApplicationDbContext _context;
 
         public MedicinesController(ApplicationDbContext context)
@@ -17,26 +16,27 @@ namespace Eczanem.Api.Controllers
             _context = context;
         }
 
-        // 1. LİSTELEME (GET)
+        // 1. LİSTELEME
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            // Veritabanındaki "Medicines" tablosundan hepsini çek
-            var medicines = await _context.Medicines.ToListAsync();
+            var medicines = await _context.Medicines
+                                          .Include(m => m.Category)
+                                          .Include(m => m.Supplier)
+                                          .ToListAsync();
             return Ok(medicines);
         }
 
-        // 2. EKLEME (POST)
+        // 2. EKLEME
         [HttpPost]
         public async Task<IActionResult> Add(Medicine medicine)
         {
-            // Veritabanına ekle ve kaydet
             _context.Medicines.Add(medicine);
-            await _context.SaveChangesAsync(); // Kaydetmeden ID oluşmaz
+            await _context.SaveChangesAsync();
             return Ok(medicine);
         }
 
-        // 3. SİLME (DELETE)
+        // 3. SİLME
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -48,21 +48,26 @@ namespace Eczanem.Api.Controllers
             return Ok();
         }
 
-        // 4. GÜNCELLEME (PUT)
+        // 4. GÜNCELLEME
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Medicine updatedMedicine)
         {
             var existingMedicine = await _context.Medicines.FindAsync(id);
             if (existingMedicine == null) return NotFound("İlaç bulunamadı");
 
-            // Bilgileri güncelle
+            // Tüm alanları güncelle
             existingMedicine.Name = updatedMedicine.Name;
             existingMedicine.Barcode = updatedMedicine.Barcode;
             existingMedicine.Manufacturer = updatedMedicine.Manufacturer;
             existingMedicine.Stock = updatedMedicine.Stock;
             existingMedicine.Price = updatedMedicine.Price;
+            existingMedicine.CategoryId = updatedMedicine.CategoryId;
+            existingMedicine.SupplierId = updatedMedicine.SupplierId;
 
-            await _context.SaveChangesAsync(); // Değişiklikleri veritabanına yaz
+            // TARİH GÜNCELLEMESİ 
+            existingMedicine.ExpirationDate = updatedMedicine.ExpirationDate;
+
+            await _context.SaveChangesAsync();
             return Ok(existingMedicine);
         }
     }

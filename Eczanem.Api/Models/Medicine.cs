@@ -1,5 +1,5 @@
-﻿// Models/Medicine.cs
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; 
 
 namespace Eczanem.Api.Models
 {
@@ -13,12 +13,28 @@ namespace Eczanem.Api.Models
 
         [Required]
         [MaxLength(50)]
-        public string Barcode { get; set; } = string.Empty; // İlaç barkodu
+        public string Barcode { get; set; } = string.Empty;
 
         [MaxLength(200)]
-        public string? Manufacturer { get; set; } // Üretici firma
+        public string? Manufacturer { get; set; }
 
-        public int Stock { get; set; } = 0;      // İlaç Adedi
-        public decimal Price { get; set; } = 0;  // İlaç Fiyatı
+        public int Stock { get; set; } = 0;
+        public decimal Price { get; set; } = 0;
+
+
+        // Hangi kategoriye ait? (int? yaptık ki kategori seçmek zorunlu olmasın)
+        public int? CategoryId { get; set; }
+
+        // Bağlantı köprüsü (Bu sayede ilacın kategorisinin ADINI çekebileceğiz)
+        [ForeignKey("CategoryId")]
+        public Category? Category { get; set; }
+        // Hangi tedarikçiden alınıyor?
+        public int? SupplierId { get; set; }
+
+        // Bağlantı köprüsü
+        [ForeignKey("SupplierId")]
+        public Supplier? Supplier { get; set; }
+        // Son Kullanma Tarihi (Opsiyonel olabilir ama biz varsayılan olarak 1 yıl sonrasını atayalım)
+        public DateTime ExpirationDate { get; set; } = DateTime.Now.AddYears(1);
     }
 }
