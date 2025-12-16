@@ -19,5 +19,6 @@ namespace Eczanem.Api.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<StockMovement> StockMovements { get; set; }
     }
 }
