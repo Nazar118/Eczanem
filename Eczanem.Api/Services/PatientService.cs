@@ -1,4 +1,6 @@
-﻿using Eczanem.Api.Interfaces;
+﻿using Microsoft.EntityFrameworkCore; // Include için gerekli
+using Eczanem.Api.Data; // DbContext için gerekli
+using Eczanem.Api.Interfaces;
 using Eczanem.Api.Models;
 
 namespace Eczanem.Api.Services
@@ -6,21 +8,32 @@ namespace Eczanem.Api.Services
     public class PatientService : IPatientService
     {
         private readonly IRepository<Patient> _patientRepository;
+        private readonly ApplicationDbContext _context;
 
-        public PatientService(IRepository<Patient> patientRepository)
+        public PatientService(IRepository<Patient> patientRepository, ApplicationDbContext context)
         {
             _patientRepository = patientRepository;
+            _context = context;
         }
 
+        // 1. TÜM HASTALARI GETİR (Hastalık İsimleriyle Beraber)
         public async Task<IEnumerable<Patient>> GetAllPatientsAsync()
         {
-            return await _patientRepository.GetAllAsync();
+            // Repository yerine Context kullanıyoruz çünkü "Include" yapmamız lazım
+            return await _context.Patients
+                                 .Include(p => p.ChronicDisease) 
+                                 .ToListAsync();
         }
 
+        // 2. TEK HASTA GETİR (Hastalık İsmiyle Beraber)
         public async Task<Patient?> GetPatientByIdAsync(int id)
         {
-            return await _patientRepository.GetByIdAsync(id);
+            return await _context.Patients
+                                 .Include(p => p.ChronicDisease) 
+                                 .FirstOrDefaultAsync(p => p.Id == id);
         }
+
+        // --- Diğerleri Aynen Kalıyor (Repository Kullanmaya Devam) ---
 
         public async Task<Patient> CreatePatientAsync(Patient patient)
         {
@@ -31,8 +44,6 @@ namespace Eczanem.Api.Services
 
         public async Task UpdatePatientAsync(Patient patient)
         {
-            // Repository'de Update metodu void ise async/await kullanamayabiliriz,
-            // ama SaveChangesAsync çağırmalıyız.
             _patientRepository.Update(patient);
             await _patientRepository.SaveChangesAsync();
         }

@@ -4,6 +4,7 @@ using Eczanem.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eczanem.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251216192605_KronikHastaliklar")]
+    partial class KronikHastaliklar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,9 +125,6 @@ namespace Eczanem.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ChronicDiseaseId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -144,8 +144,6 @@ namespace Eczanem.Api.Migrations
                         .HasColumnType("nvarchar(11)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ChronicDiseaseId");
 
                     b.ToTable("Patients");
                 });
@@ -346,15 +344,6 @@ namespace Eczanem.Api.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Supplier");
-                });
-
-            modelBuilder.Entity("Eczanem.Api.Models.Patient", b =>
-                {
-                    b.HasOne("Eczanem.Api.Models.ChronicDisease", "ChronicDisease")
-                        .WithMany()
-                        .HasForeignKey("ChronicDiseaseId");
-
-                    b.Navigation("ChronicDisease");
                 });
 
             modelBuilder.Entity("Eczanem.Api.Models.Sale", b =>

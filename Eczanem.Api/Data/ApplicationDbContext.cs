@@ -20,5 +20,6 @@ namespace Eczanem.Api.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<StockMovement> StockMovements { get; set; }
+        public DbSet<ChronicDisease> ChronicDiseases { get; set; } // Kronik Hastalıklar Tablosu
     }
 }

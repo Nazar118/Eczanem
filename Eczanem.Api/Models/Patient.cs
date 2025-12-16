@@ -1,5 +1,6 @@
 ﻿// Models/Patient.cs
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Eczanem.Api.Models
 {
@@ -22,7 +23,10 @@ namespace Eczanem.Api.Models
         [Phone]
         public string? PhoneNumber { get; set; }
 
-        // Hastanın aldığı ilaç geçmişini buradan takip edebiliriz (İsteğe bağlı navigasyon)
-        // public ICollection<Sale> Sales { get; set; }
+        // Kronik Hastalık Bağlantısı (Opsiyonel)
+        public int? ChronicDiseaseId { get; set; }
+
+        [ForeignKey("ChronicDiseaseId")]
+        public ChronicDisease? ChronicDisease { get; set; }
     }
 } 
