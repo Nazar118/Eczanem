@@ -21,7 +21,7 @@ namespace Eczanem.Api.Models
         public string TcNo { get; set; } = string.Empty;
 
         [Phone]
-        public string? PhoneNumber { get; set; }
+        public string? PhoneNumber{ get; set; }
 
         // Kronik Hastalık Bağlantısı (Opsiyonel)
         public int? ChronicDiseaseId { get; set; }

@@ -31,8 +31,26 @@ namespace Eczanem.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(Medicine medicine)
         {
+            // 1. Önce İlacı Kaydet
             _context.Medicines.Add(medicine);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Kaydet ki ilacın ID'si oluşsun
+
+            // 2. OTOMATİK STOK HAREKETİ OLUŞTUR (İlk Giriş Kaydı)
+            if (medicine.Stock > 0)
+            {
+                var movement = new StockMovement
+                {
+                    MedicineId = medicine.Id, // Az önce oluşan ID'yi al
+                    Type = "Giriş",
+                    Quantity = medicine.Stock,
+                    Date = DateTime.Now,
+                    Description = "Yeni İlaç Kaydı / Açılış Stoğu"
+                };
+
+                _context.StockMovements.Add(movement);
+                await _context.SaveChangesAsync();
+            }
+
             return Ok(medicine);
         }
 
