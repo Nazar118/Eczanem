@@ -16,11 +16,10 @@ namespace Eczanem.Api.Controllers
             _context = context;
         }
 
-        // GİRİŞ YAP (LOGIN)
+        // 1. GİRİŞ YAP (LOGIN)
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] User loginRequest)
         {
-            // Veritabanında bu kullanıcı adı ve şifreye sahip biri var mı?
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == loginRequest.Username && u.Password == loginRequest.Password);
 
@@ -29,11 +28,10 @@ namespace Eczanem.Api.Controllers
                 return Unauthorized(new { message = "Kullanıcı adı veya şifre hatalı!" });
             }
 
-            // Kullanıcı bulundu, bilgileri geri döndür
             return Ok(user);
         }
 
-        // KULLANICI EKLE (Patron için opsiyonel)
+        // 2. KULLANICI EKLE
         [HttpPost]
         public async Task<IActionResult> Register(User user)
         {
@@ -41,5 +39,47 @@ namespace Eczanem.Api.Controllers
             await _context.SaveChangesAsync();
             return Ok(user);
         }
+
+        // 3. ŞİFRE DEĞİŞTİRME
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest model)
+        {
+            var user = await _context.Users.FindAsync(model.UserId);
+            if (user == null) return NotFound("Kullanıcı bulunamadı.");
+
+            if (user.Password != model.CurrentPassword)
+            {
+                return BadRequest("Mevcut şifreniz hatalı!");
+            }
+
+            user.Password = model.NewPassword;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Şifre başarıyla güncellendi!" });
+        }
+
+        // 4. PROFİL GÜNCELLEME (Ad ve Email) - (Sınıfın içine aldık!)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProfile(int id, [FromBody] User updatedInfo)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound("Kullanıcı bulunamadı.");
+
+            // Sadece İsim ve Maili değiştiriyoruz
+            user.Name = updatedInfo.Name;
+            user.Email = updatedInfo.Email;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(user);
+        }
+
+    } // <-- UsersController sınıfı burada bitiyor
+
+    public class ChangePasswordRequest
+    {
+        public int UserId { get; set; }
+        public string CurrentPassword { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
     }
 }

@@ -31,16 +31,16 @@ namespace Eczanem.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(PatientMedicine pm)
         {
-            // 1. İlacı Veritabanından Bul (Kutu İçi Adedi öğrenmek için)
             var medicine = await _context.Medicines.FindAsync(pm.MedicineId);
-
             if (medicine == null) return NotFound("İlaç bulunamadı.");
 
-            // Formül: (Kutu İçi Adet / Günlük Kullanım)
-            // Örn: 30 tablet / Günde 2 = 15 Gün gider.
+            // Eğer veritabanında kutu adedi 0 veya girilmemişse, varsayılan 30 kabul et.
+            int actualPackageSize = medicine.PackageSize > 0 ? medicine.PackageSize : 30;
 
             int dailyUsage = pm.DailyUsage > 0 ? pm.DailyUsage : 1;
-            int daysLasts = medicine.PackageSize / dailyUsage;
+
+            // Hesapla: (30 / 2 = 15 Gün)
+            int daysLasts = actualPackageSize / dailyUsage;
 
             pm.StartDate = DateTime.Now;
             pm.EstimatedEndDate = pm.StartDate.AddDays(daysLasts);
