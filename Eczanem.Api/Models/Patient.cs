@@ -22,6 +22,7 @@ namespace Eczanem.Api.Models
 
         [Phone]
         public string? PhoneNumber{ get; set; }
+        public string Password { get; set; } = "123456";
 
         // Kronik Hastalık Bağlantısı (Opsiyonel)
         public int? ChronicDiseaseId { get; set; }
