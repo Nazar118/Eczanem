@@ -1,14 +1,12 @@
-using Eczanem.Api.Data; // DbContext'imizin bulunduðu yer
+using Eczanem.Api.Data; 
 using Eczanem.Api.Interfaces; 
 using Eczanem.Api.Repositories;
 using Eczanem.Api.Services;
-using Microsoft.EntityFrameworkCore; // EF Core kütüphanesi
+using Microsoft.EntityFrameworkCore; 
 var builder = WebApplication.CreateBuilder(args);
 
-//  appsettings.json'dan baðlantý dizesini oku.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-//  DbContext'i servislere kaydet ve SQL Server kullanacaðýný belirt.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -18,14 +16,13 @@ builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 builder.Services.AddScoped<IReminderService, ReminderService>();
-// Program.cs dosyasýnda CORS kýsmýný þöyle deðiþtir:
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         builder =>
         {
-            builder.AllowAnyOrigin()   // <-- DÝKKAT: Port kýsýtlamasýný kaldýrdýk! Herkes gelebilir.
+            builder.AllowAnyOrigin()   
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
@@ -37,14 +34,12 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
 
 app.UseCors("AllowReactApp");
 

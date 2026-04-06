@@ -15,20 +15,32 @@ namespace Eczanem.Api.Controllers
         {
             _context = context;
         }
-
-        // 1. GİRİŞ YAP (LOGIN)
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] User loginRequest)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == loginRequest.Username && u.Password == loginRequest.Password);
-
-            if (user == null)
+            try
             {
-                return Unauthorized(new { message = "Kullanıcı adı veya şifre hatalı!" });
-            }
+                // Gelen veriyi kontrol et (Boş geliyorsa hata döner)
+                if (loginRequest == null || string.IsNullOrEmpty(loginRequest.TcNo))
+                {
+                    return BadRequest("Veri boş geldi.");
+                }
 
-            return Ok(user);
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.TcNo == loginRequest.TcNo && u.Password == loginRequest.Password);
+
+                if (user == null)
+                {
+                    return Unauthorized(new { message = "Kullanıcı adı veya şifre hatalı!" });
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                // Hata olduğunda nedenini bize söylesin
+                return StatusCode(500, new { message = "Veritabanı hatası!", detail = ex.Message });
+            }
         }
 
         // 2. KULLANICI EKLE
