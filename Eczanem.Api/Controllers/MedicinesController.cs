@@ -27,6 +27,22 @@ namespace Eczanem.Api.Controllers
             return Ok(medicines);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var medicine = await _context.Medicines
+                                         .Include(m => m.Category)
+                                         .Include(m => m.Supplier)
+                                         .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (medicine == null)
+            {
+                return NotFound(new { message = "İlaç bulunamadı" });
+            }
+
+            return Ok(medicine);
+        }
+
         // 2. EKLEME
         [HttpPost]
         public async Task<IActionResult> Add(Medicine medicine)

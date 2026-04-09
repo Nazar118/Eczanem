@@ -19,9 +19,10 @@ namespace Eczanem.Api.Models
         public string? Manufacturer { get; set; }
 
         public int Stock { get; set; } = 0;
-        // Kutu İçi Adet (Varsayılan 30 olsun ki eski kayıtlar patlamasın)
         public int PackageSize { get; set; } = 30;
         public decimal Price { get; set; } = 0;
+        public string Description { get; set; } = string.Empty; // İlaç Açıklaması
+        public string Usage { get; set; } = string.Empty;       // Kullanım Bilgisi
 
 
         // Hangi kategoriye ait? (int? yaptık ki kategori seçmek zorunlu olmasın)
