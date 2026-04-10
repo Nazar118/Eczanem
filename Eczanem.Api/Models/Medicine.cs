@@ -39,5 +39,7 @@ namespace Eczanem.Api.Models
         public Supplier? Supplier { get; set; }
         // Son Kullanma Tarihi (Opsiyonel olabilir ama biz varsayılan olarak 1 yıl sonrasını atayalım)
         public DateTime ExpirationDate { get; set; } = DateTime.Now.AddYears(1);
+        // İlacın reçeteli olup olmadığını tutan alan (True: Reçeteli, False: Reçetesiz)
+        public bool IsPrescriptionRequired { get; set; } = false;
     }
 }

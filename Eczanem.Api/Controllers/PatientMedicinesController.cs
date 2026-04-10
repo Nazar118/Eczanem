@@ -48,11 +48,12 @@ namespace Eczanem.Api.Controllers
             pm.IsNotificationSent = false;
             pm.IsActive = true;
 
+            pm.Status = "Hazırlanıyor";
+
             _context.PatientMedicines.Add(pm);
             await _context.SaveChangesAsync();
             return Ok(pm);
         }
-
         // 3. İLACI BIRAKTI / SİL
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
