@@ -29,5 +29,9 @@ namespace Eczanem.Api.Models
 
         public bool IsActive { get; set; } = true;
         public string Status { get; set; } = "Hazırlanıyor";
+        // Hastanın kaç kutu istediği
+        public int Quantity { get; set; } = 1;
+
+        public string? Note { get; set; }
     }
 }

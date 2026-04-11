@@ -54,6 +54,38 @@ namespace Eczanem.Api.Controllers
             await _context.SaveChangesAsync();
             return Ok(pm);
         }
+        // Eczanem Pro Web Paneli İçin: Tüm Siparişleri Getirir
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var list = await _context.PatientMedicines
+                .Include(x => x.Patient)  // Hastanın adı, soyadı, TC'si vb. gelsin
+                .Include(x => x.Medicine) // İlacın adı, fiyatı vb. gelsin
+                .OrderByDescending(x => x.StartDate) // En yeni siparişler en üstte çıksın
+                .ToListAsync();
+
+            return Ok(list);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateOrderState(int id, [FromBody] PatientMedicine updatedData)
+        {
+            var item = await _context.PatientMedicines.FindAsync(id);
+            if (item == null) return NotFound("Sipariş bulunamadı.");
+
+            if (!string.IsNullOrEmpty(updatedData.Status))
+            {
+                item.Status = updatedData.Status;
+            }
+
+            if (updatedData.Status == "İptal Edildi")
+            {
+                item.IsActive = false;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(item);
+        }
         // 3. İLACI BIRAKTI / SİL
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
