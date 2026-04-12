@@ -57,5 +57,12 @@ namespace Eczanem.Api.Services
                 await _patientRepository.SaveChangesAsync();
             }
         }
+        public async Task<Patient?> LoginAsync(string tcNo, string password)
+        {
+            var patient = await _context.Patients
+                                        .FirstOrDefaultAsync(p => p.TcNo == tcNo && p.Password == password);
+
+            return patient; 
+        }
     }
 }

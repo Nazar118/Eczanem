@@ -9,5 +9,6 @@ namespace Eczanem.Api.Interfaces
         Task<Patient> CreatePatientAsync(Patient patient);
         Task UpdatePatientAsync(Patient patient);
         Task DeletePatientAsync(int id);
+        Task<Patient?> LoginAsync(string tcNo, string password);
     }
 }
